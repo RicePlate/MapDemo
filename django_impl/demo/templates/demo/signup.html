@@ -1,0 +1,67 @@
+{% load static %}
+<html>
+<head>
+    <title>Map Demo</title>
+    <link rel="stylesheet" href="{% static 'demo/materialize/css/materialize.min.css' %}">
+    <link rel="stylesheet" href="{% static 'demo/font-awesome/css/font-awesome.min.css' %}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="{% static 'demo/jquery/jquery-3.1.1.min.js' %}"></script>
+    <script src="{% static 'demo/materialize/js/materialize.min.js' %}"></script>
+    <style>
+        body {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+<main>
+    <div style="position:relative; left:37%; top:75px; min-width:1500px;">
+        <div class="row">
+            <div class="col s12 m3">
+                <div class="card z-depth-5">
+                    <div class="card-content blue darken-1 white-text">
+                        <span class="card-title">Sign Up</span>
+                    </div>
+                    <div class="card-action">
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            {% for field in form %}
+                                <div class="row">
+                                    <div class="col s12">
+                                        <div class="input-field inline">
+                                            {{ field }}
+                                            <label for="{{ field.name }}" data-error="wrong" data-success="right">{{ field.label }}</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <div class="row" style="white-space:nowrap;">
+                                <button class="btn waves-effect waves-light blue darken-1 right" type="submit" name="action">Submit
+                                    <i class="material-icons right">send</i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="page-footer light-blue darken-3" style="padding-top:0;">
+    <div class="footer-copyright light-blue darken-3">
+        <div class="container" style="left:20px;">
+            2016 Map Demo By Spencer Aiello
+            <a class="grey-text text-lighten-4 right" style="text-decoration:underline;" href="#!">More Links</a>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

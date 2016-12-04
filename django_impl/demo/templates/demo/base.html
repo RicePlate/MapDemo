@@ -1,0 +1,73 @@
+{% load static %}
+<html>
+<head>
+    <title>Map Demo</title>
+    <!--font awesome-->
+    <link rel="stylesheet" href="{% static 'demo/font-awesome/css/font-awesome.min.css' %}">
+
+    <!--jquery-->
+    <script src="{% static 'demo/jquery/jquery-3.1.1.min.js' %}"></script>
+
+    <!--materialize stuff-->
+    <link rel="stylesheet" href="{% static 'demo/materialize/css/materialize.min.css' %}">
+    <script src="{% static 'demo/materialize/js/materialize.min.js' %}"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!--map box stuff-->
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.28.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.28.0/mapbox-gl.css' rel='stylesheet' />
+
+    <style>
+        body {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1 0 auto;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="navbar-fixed">
+        <nav>
+            <div class="nav-wrapper grey darken-3">
+                <a style="left:20px; position:absolute;"> <i class="fa fa-globe"></i> {{ user.username }}'s maps </a>
+                <a href="/#" class="brand-logo center">MapDemo</a>
+                <ul id="nav-mobile" class="right">
+                    <li><a style="font-size:20px;" href="/logout"><i class="material-icons left">ic_exit_to_app</i>Logout</a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <div>
+        {% block content %}
+        {% endblock %}
+    </div>
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1Ijoic3BucnBhIiwiYSI6ImNpd2FtYXFmYjA0M20zMm1zb3RiNnJieGMifQ.bIttLrrEpj64CRokEwvSNQ';
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v9',
+            center: [-74.50, 40],
+            zoom: 9
+        });
+        var bounds = map.getBounds();
+    </script>
+</main>
+
+<footer class="page-footer light-blue darken-3" style="padding-top:0; z-index:1;">
+    <div class="footer-copyright light-blue darken-3">
+        <div class="container" style="left:20px;">
+            2016 Map Demo By Spencer Aiello
+            <a class="grey-text text-lighten-4 right" style="text-decoration:underline;" href="#!">More Links</a>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

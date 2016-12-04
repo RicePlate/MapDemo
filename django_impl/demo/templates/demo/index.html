@@ -1,0 +1,94 @@
+{% extends 'demo/base.html' %}
+
+{% block content %}
+<div>
+    <ul id="nav-mobile" class="collection with-header side-nav fixed" style="transform: translateX(0px);z-index:0; top:65px;">
+        <li class="collection-header center"><h4>My Maps</h4></li>
+        <li class="collection-item">Map 1</li>
+        <li class="collection-item">Map 2</li>
+        <li class="collection-item">Map 3</li>
+        <li class="collection-item">Map 4</li>
+    </ul>
+</div>
+{% if model and model.current_map %}
+<p>
+    {{ model.maps }}
+    {{ model.current_map }}
+    {{ model.current_marks }}
+</p>
+{% else %}
+<p>no maps...</p>
+{% endif %}
+<div style="width:80%;min-width:100px;height:60px;">
+    <div class="input-field col s6" style="left:350px; top=-17px; width:20%;">
+        <i class="material-icons prefix" style="line-height:1.5;">mode_edit</i>
+        <textarea style="padding:0;" id="mapname" class="materialize-textarea"></textarea>
+        <label for="mapname">Map Name</label>
+    </div>
+    <div style="top:-50px; position:relative; left:800px; display:inline-block;">
+        <p>N.E. (Long, Lat): (<input id="ne_lng" style="width:100px;height:20px;">,<input id="ne_lat" style="width:100px;height:20px;">)</p>
+        <p style="position:absolute; left:350px;top:0px; width:450px;">S.W. (Long, Lat): (<input id="sw_lng" style="width:92px;height:20px;">,<input id="sw_lat" style="width:92px;height:20px;">)</p>
+        <a id="locator" style="left:-50px;top:-75px;" class="btn-floating black tooltipped" data-position="top" data-delay="50" data-tooltip="Fit to Location"><i class="material-icons">gps_fixed</i></a>
+    </div>
+</div>
+<div id='map' style="width: 60%; height: 80%;left: 350px;"></div>
+<div class="fixed-action-btn horizontal" style="bottom:60px;">
+    <a class="btn-floating btn-large red">
+        <i class="large material-icons">mode_edit</i>
+    </a>
+    <ul>
+        {% if model.current_map %}
+        <li><a href="{% url 'demo:delete' model.current_map.id %}" class="btn-floating red tooltipped" data-position="top" data-delay="50" data-tooltip="Delete Map"><i class="material-icons">delete_forever</i></a></li>
+        <li><a href="{% url 'demo:edit'   model.current_map.id  %}" class="btn-floating green tooltipped" data-position="top" data-delay="50" data-tooltip="Edit Map"><i class="material-icons">build</i></a></li>
+        {% endif %}
+        <li><a href="{% url 'demo:add' %}"  class="btn-floating blue tooltipped" data-position="top" data-delay="50" data-tooltip="Add Map"><i class="material-icons">add</i></a></li>
+    </ul>
+</div>
+<script>
+        var setbounds = function(bounds) {
+            document.getElementById("ne_lng").value = bounds._ne.lng.toFixed(6);
+            document.getElementById("ne_lat").value = bounds._ne.lat.toFixed(6);
+            document.getElementById("sw_lng").value = bounds._sw.lng.toFixed(6);
+            document.getElementById("sw_lat").value = bounds._sw.lat.toFixed(6);
+            <!--console.log("NE: [" + bounds._ne.lat + ", " + bounds._ne.lng + "]; SW: [" + bounds._sw.lat + ", " + bounds._sw.lng + "];");-->
+        };
+        $(document).ready(function() {
+            var i;
+            console.log(map);
+            console.log(bounds);
+            setbounds(bounds);
+            var isMouseDown = false;
+            document.getElementById("locator").addEventListener("click", function() {
+                ne_lng = document.getElementById("ne_lng").value;
+                ne_lat = document.getElementById("ne_lat").value;
+                sw_lng = document.getElementById("sw_lng").value;
+                sw_lat = document.getElementById("sw_lat").value;
+                try {
+                    map.fitBounds([[ne_lng, ne_lat], [sw_lng, sw_lat]]);
+                } catch(err) {
+                    Materialize.toast('Illegal Input! Resetting map.', 4000, 'red')
+                    map= new mapboxgl.Map({
+                        container: 'map',
+                        style: 'mapbox://styles/mapbox/streets-v9',
+                        center: [-74.50, 40],
+                        zoom: 9
+                    });
+                    setbounds(map.getBounds());
+                }
+            });
+            document.onmousedown = function() { isMouseDown = true  };
+            document.onmouseup   = function() { isMouseDown = false; clearInterval(i); };
+            document.onmousemove = function(e) {
+                if(isMouseDown) {
+                    if( i==null ) { /* only set interval once when moving and mousedown....*/
+                        if( e.target.className == "mapboxgl-canvas" )
+                            i=setInterval(function() { bounds = map.getBounds(); setbounds(bounds); }, 10);
+                    }
+                } else {
+                    clearInterval(i);
+                    i=null;
+                }
+            };
+        });
+        </script>
+{% endblock %}
